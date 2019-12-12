@@ -1,15 +1,21 @@
 import { DefaultShader } from './shader.js';
 import { Renderable } from './renderable.js';
+import { InputManager } from './inputManager.js';
 
 var canvas = document.getElementById('my_Canvas');
 var gl = canvas.getContext('experimental-webgl');
 
+const spritePosition = {
+	X : 0,
+	Y : 0
+};
+
 const CreateMesh = () => {
 	var vertices = [ 
-		-0.5,-0.5,0.0,  //  1,1,1, // bottom left
-		0.5,0.5,0.0,    //    1,0,1, // top right
-		0.5,-0.5,0.0,   //  0,0,0,// bottom right
-		-0.5,0.5,0.0,   //  0,1,0// Top Left
+		-0.5,-0.5,0.0,	0,1,  //  1,1,1, // bottom left
+		0.5,0.5,0.0,    1,0,//    1,0,1, // top right
+		0.5,-0.5,0.0,   1,1,//  0,0,0,// bottom right
+		-0.5,0.5,0.0,   0,0 //  0,1,0// Top Left
 	];
 	var indices = [0,1,2, 0,1,3];
 	
@@ -27,20 +33,46 @@ const CreateMesh = () => {
 	gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, Index_Buffer);
 	
+	gl.useProgram(DefaultShader());
 	//Get the attribute location
 	var coord = gl.getAttribLocation(DefaultShader(), 'coordinates');
-	gl.vertexAttribPointer(coord, 3, gl.FLOAT, false, 0 * gl.FLOAT, 0);
+	gl.vertexAttribPointer(coord, 3, gl.FLOAT, false, 20, 0);
 	gl.enableVertexAttribArray(coord);
 	
 	// get the attribute location, stride + offest are off
-	var color = gl.getAttribLocation(DefaultShader(), 'color');
-	gl.vertexAttribPointer(color, 3, gl.FLOAT, false, 0 * gl.FLOAT, 0 * gl.FLOAT) ;
-	gl.enableVertexAttribArray(color);
+	var uv = gl.getAttribLocation(DefaultShader(), 'UV');
+	gl.vertexAttribPointer(uv, 2, gl.FLOAT, false, 20, 12) ;
+	gl.enableVertexAttribArray(uv);
 };
 
 const Update = (deltaTime) => {
+
+
+	if(InputManager().keys.up == 1) {
+		spritePosition.Y += deltaTime;
+	}
+	if(InputManager().keys.down == 1) {
+		spritePosition.Y -= deltaTime;
+	}
+	if(InputManager().keys.left == 1) {
+		spritePosition.X -= deltaTime;
+	}
+	if(InputManager().keys.right == 1) {
+		spritePosition.X += deltaTime;
+	}
+
 	var position = gl.getUniformLocation(DefaultShader(), 'position');
-	gl.uniform2fv(position, [0.2, 0]);
+	gl.uniform2fv(position, [spritePosition.X, spritePosition.Y]);
+
+	
+
+	const canvasWidth = canvas.offsetWidth;
+	const canvasHeight = canvas.offsetHeight;
+
+	var canvasSize = gl.getUniformLocation(DefaultShader(), 'canvasSize');
+	gl.uniform2fv(canvasSize, [canvasWidth, canvasHeight]);
+
+	InputManager().Update(); // reset keys
 };
 
 const Render = () => {
@@ -50,8 +82,7 @@ const Render = () => {
 };
 
 function loop(timestamp) {
-	//const seconds = (timestamp / 1000);
-	var deltaTime = timestamp - lastRender;
+	var deltaTime = (timestamp - lastRender) / 1000;
 
 	Update(deltaTime);
 
@@ -69,6 +100,26 @@ export const main = () => {
 	gl.clearColor(0.5, 0.5, 0.5, 0.9);
 	gl.enable(gl.DEPTH_TEST);
 	gl.viewport(0,0,canvas.width,canvas.height);
+
+	// Create a texture.
+	var texture = gl.createTexture();
+	gl.bindTexture(gl.TEXTURE_2D, texture);
+ 
+	// Fill the texture with a 1x1 blue pixel.
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+		new Uint8Array([0, 0, 255, 255]));
+
+	// Asynchronously load an image
+	var image = new Image();
+	image.src = 'f-texture.png';
+	image.addEventListener('load', function() {
+	// Now that the image has loaded make copy it to the texture.
+		gl.bindTexture(gl.TEXTURE_2D, texture);
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, image);
+		gl.generateMipmap(gl.TEXTURE_2D);
+	});
+
+	
 
 	var renderableObject = Renderable(0,1);
 	CreateMesh();

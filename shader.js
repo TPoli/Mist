@@ -28,21 +28,24 @@ export const DefaultShader = () => {
 	}
 
 	var vertCode = 'attribute vec3 coordinates;'+
-            'attribute vec3 color;' +
-            'varying vec3 vColor;' +
+            'attribute vec2 UV;' +
+            'varying vec2 vUV;' +
             'uniform vec2 position;' +
-            'void main(void) {' +
-                ' gl_Position = vec4(coordinates + vec3(position,0), 1.0);' +
-               'vColor = color;'+
+			'uniform vec2 canvasSize;' +
+			'void main(void) {' +
+				'vec3 vert = vec3((64.0 / canvasSize.x) * coordinates.x, (64.0 / canvasSize.y) * coordinates.y, coordinates.z);' +
+				'gl_Position = vec4(vert + vec3(position,0), 1.0);' +
+               'vUV = UV;'+
             '}';
 
 	var fragCode = 'precision mediump float;'+
-            'varying vec3 vColor;'+
+			'varying vec2 vUV;'+
+			'uniform sampler2D u_texture;' +
             'void main(void) {'+
-               'gl_FragColor = vec4(vColor, 1.);'+
+				'gl_FragColor = texture2D(u_texture, vUV);' +
             '}';
 
 	m_oDefaultShader = CreateShader(vertCode, fragCode);
-    
+
 	return m_oDefaultShader;
 };
