@@ -15,7 +15,11 @@ const KeyEventProcessor = (keyCode, keyState) => {
 	case 40:
 		m_InputManager.keys.down = keyState;
 		break;
+	case 32:
+		m_InputManager.keys.space = keyState;
+		break;
 	default:
+		console.log(keyCode);
 	}
 };
 
@@ -38,7 +42,8 @@ export const InputManager = () => {
 			left: 0,
 			right: 0,
 			up: 0,
-			down: 0
+			down: 0,
+			space: 0
 		}
 	};
 

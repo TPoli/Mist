@@ -1,15 +1,12 @@
 import { DefaultShader } from './shader.js';
 import { Renderable } from './renderable.js';
 import { InputManager } from './inputManager.js';
+import { GetTexture } from './textureManager.js';
 
 var canvas = document.getElementById('my_Canvas');
 var gl = canvas.getContext('experimental-webgl');
 
 var renderableObject = Renderable(0, 0, DefaultShader());
-const spritePosition = {
-	X : 0,
-	Y : 0
-};
 
 const CreateMesh = () => {
 	var vertices = [ 
@@ -47,32 +44,19 @@ const CreateMesh = () => {
 };
 
 const Update = (deltaTime) => {
-	//var position = gl.getUniformLocation(DefaultShader(), 'position');
-	//gl.uniform2fv(position, [0.2, 0]);
 
 	if(InputManager().keys.up == 1) {
-		spritePosition.Y += deltaTime;
+		renderableObject.Y += deltaTime;
 	}
 	if(InputManager().keys.down == 1) {
-		spritePosition.Y -= deltaTime;
+		renderableObject.Y -= deltaTime;
 	}
 	if(InputManager().keys.left == 1) {
-		spritePosition.X -= deltaTime;
+		renderableObject.X -= deltaTime;
 	}
 	if(InputManager().keys.right == 1) {
-		spritePosition.X += deltaTime;
+		renderableObject.X += deltaTime;
 	}
-
-	var position = gl.getUniformLocation(DefaultShader(), 'position');
-	gl.uniform2fv(position, [spritePosition.X, spritePosition.Y]);
-
-	
-
-	const canvasWidth = canvas.offsetWidth;
-	const canvasHeight = canvas.offsetHeight;
-
-	var canvasSize = gl.getUniformLocation(DefaultShader(), 'canvasSize');
-	gl.uniform2fv(canvasSize, [canvasWidth, canvasHeight]);
 
 	InputManager().Update(); // reset keys
 };
@@ -80,10 +64,22 @@ const Update = (deltaTime) => {
 const Render = () => {
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-	renderableObject.Render();
+	const canvasWidth = canvas.offsetWidth;
+	const canvasHeight = canvas.offsetHeight;
 
-	//gl.useProgram(DefaultShader());
-	//gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT,0); // always render 2 triangles
+	if (InputManager().keys.space === 1) {
+		gl.activeTexture(gl.TEXTURE0);
+		gl.bindTexture(gl.TEXTURE_2D, GetTexture('f-texture.png'));
+	} else {
+		gl.activeTexture(gl.TEXTURE0);
+		gl.bindTexture(gl.TEXTURE_2D, GetTexture('star.jpg'));
+	}
+	
+	gl.useProgram(DefaultShader());
+	var canvasSize = gl.getUniformLocation(DefaultShader(), 'canvasSize');
+	gl.uniform2fv(canvasSize, [canvasWidth, canvasHeight]);
+
+	renderableObject.Render();
 };
 
 function loop(timestamp) {
@@ -99,33 +95,17 @@ function loop(timestamp) {
 
 var lastRender = 0;
 
-
 export const main = () => {
 
 	gl.clearColor(0.5, 0.5, 0.5, 0.9);
 	gl.enable(gl.DEPTH_TEST);
 	gl.viewport(0,0,canvas.width,canvas.height);
 
-	
-	// Create a texture.
-	var texture = gl.createTexture();
-	gl.bindTexture(gl.TEXTURE_2D, texture);
- 
-	// Fill the texture with a 1x1 blue pixel.
-	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
-		new Uint8Array([0, 0, 255, 255]));
+	GetTexture('f-texture.png');
+	GetTexture('star.jpg');
 
-	// Asynchronously load an image
-	var image = new Image();
-	image.src = 'f-texture.png';
-	image.addEventListener('load', function() {
-	// Now that the image has loaded make copy it to the texture.
-		gl.bindTexture(gl.TEXTURE_2D, texture);
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, image);
-		gl.generateMipmap(gl.TEXTURE_2D);
-	});
-
-	
+	var u_image0Location = gl.getUniformLocation(DefaultShader(), 'u_texture');
+	gl.uniform1i(u_image0Location, 0);  // texture unit 0
 
 	CreateMesh();
 
