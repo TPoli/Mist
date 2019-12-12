@@ -4,6 +4,8 @@ import { Renderable } from './renderable.js';
 var canvas = document.getElementById('my_Canvas');
 var gl = canvas.getContext('experimental-webgl');
 
+var renderableObject = Renderable(0, 0, DefaultShader());
+
 const CreateMesh = () => {
 	var vertices = [ 
 		-0.5,-0.5,0.0,  //  1,1,1, // bottom left
@@ -39,14 +41,17 @@ const CreateMesh = () => {
 };
 
 const Update = (deltaTime) => {
-	var position = gl.getUniformLocation(DefaultShader(), 'position');
-	gl.uniform2fv(position, [0.2, 0]);
+	//var position = gl.getUniformLocation(DefaultShader(), 'position');
+	//gl.uniform2fv(position, [0.2, 0]);
 };
 
 const Render = () => {
-	gl.useProgram(DefaultShader());
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-	gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT,0); // always render 2 triangles
+
+	renderableObject.Render();
+
+	//gl.useProgram(DefaultShader());
+	//gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT,0); // always render 2 triangles
 };
 
 function loop(timestamp) {
@@ -70,7 +75,7 @@ export const main = () => {
 	gl.enable(gl.DEPTH_TEST);
 	gl.viewport(0,0,canvas.width,canvas.height);
 
-	var renderableObject = Renderable(0,1);
+	
 	CreateMesh();
 
 	window.requestAnimationFrame(loop);
