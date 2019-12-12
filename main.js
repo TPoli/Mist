@@ -6,7 +6,7 @@ import { GetTexture } from './textureManager.js';
 var canvas = document.getElementById('my_Canvas');
 var gl = canvas.getContext('experimental-webgl');
 
-var renderableObject = Renderable(0, 0, DefaultShader());
+var renderableObject = Renderable(0, 0, DefaultShader(), GetTexture('f-texture.png'));
 
 const CreateMesh = () => {
 	var vertices = [ 
@@ -66,14 +66,6 @@ const Render = () => {
 
 	const canvasWidth = canvas.offsetWidth;
 	const canvasHeight = canvas.offsetHeight;
-
-	if (InputManager().keys.space === 1) {
-		gl.activeTexture(gl.TEXTURE0);
-		gl.bindTexture(gl.TEXTURE_2D, GetTexture('f-texture.png'));
-	} else {
-		gl.activeTexture(gl.TEXTURE0);
-		gl.bindTexture(gl.TEXTURE_2D, GetTexture('star.jpg'));
-	}
 	
 	gl.useProgram(DefaultShader());
 	var canvasSize = gl.getUniformLocation(DefaultShader(), 'canvasSize');
