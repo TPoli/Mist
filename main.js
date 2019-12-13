@@ -1,4 +1,4 @@
-import { DefaultShader } from './shader.js';
+import { DefaultShader, TileShader, g_AllShaders } from './shader.js';
 import { Renderable } from './renderable.js';
 import { InputManager } from './inputManager.js';
 import { GetTexture } from './textureManager.js';
@@ -7,6 +7,10 @@ var canvas = document.getElementById('my_Canvas');
 var gl = canvas.getContext('experimental-webgl');
 
 var renderableObject = Renderable(0, 0, DefaultShader(), GetTexture('f-texture.png'));
+
+const mapWidth = 7;
+const mapHeight = 5;
+const mapTiles = [];
 
 const CreateMesh = () => {
 	var vertices = [ 
@@ -31,16 +35,18 @@ const CreateMesh = () => {
 	gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, Index_Buffer);
 	
-	gl.useProgram(DefaultShader());
-	//Get the attribute location
-	var coord = gl.getAttribLocation(DefaultShader(), 'coordinates');
-	gl.vertexAttribPointer(coord, 3, gl.FLOAT, false, 20, 0);
-	gl.enableVertexAttribArray(coord);
-	
-	// get the attribute location, stride + offest are off
-	var uv = gl.getAttribLocation(DefaultShader(), 'UV');
-	gl.vertexAttribPointer(uv, 2, gl.FLOAT, false, 20, 12) ;
-	gl.enableVertexAttribArray(uv);
+	for(let i = 0; i < g_AllShaders.length; ++i) {
+		gl.useProgram(g_AllShaders[i].shader);
+		//Get the attribute location
+		var coord = gl.getAttribLocation(g_AllShaders[i].shader, 'coordinates');
+		gl.vertexAttribPointer(coord, 3, gl.FLOAT, false, 20, 0);
+		gl.enableVertexAttribArray(coord);
+		
+		// get the attribute location
+		var uv = gl.getAttribLocation(g_AllShaders[i].shader, 'UV');
+		gl.vertexAttribPointer(uv, 2, gl.FLOAT, false, 20, 12) ;
+		gl.enableVertexAttribArray(uv);
+	}
 };
 
 const Update = (deltaTime) => {
@@ -58,18 +64,28 @@ const Update = (deltaTime) => {
 		renderableObject.X += deltaTime;
 	}
 
-	InputManager().Update(); // reset keys
+	InputManager().Update(); // reset keys if released this frame
 };
 
 const Render = () => {
-	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+	gl.clear(gl.COLOR_BUFFER_BIT);
 
 	const canvasWidth = canvas.offsetWidth;
 	const canvasHeight = canvas.offsetHeight;
+
+	// update canvas size for all shaders
+	for(let i = 0; i < g_AllShaders.length; ++i) {
+		gl.useProgram(g_AllShaders[i].shader);
+		
+		var canvasSize = gl.getUniformLocation(g_AllShaders[i].shader, 'canvasSize');
+		gl.uniform2fv(canvasSize, [canvasWidth, canvasHeight]);
+	}
 	
-	gl.useProgram(DefaultShader());
-	var canvasSize = gl.getUniformLocation(DefaultShader(), 'canvasSize');
-	gl.uniform2fv(canvasSize, [canvasWidth, canvasHeight]);
+	for(let i = 0; i < mapTiles.length; ++i) {
+		for(let j = 0; j < mapTiles[i].length; ++j) {
+			mapTiles[i][j].Render();
+		}
+	}
 
 	renderableObject.Render();
 };
@@ -90,14 +106,19 @@ var lastRender = 0;
 export const main = () => {
 
 	gl.clearColor(0.5, 0.5, 0.5, 0.9);
-	gl.enable(gl.DEPTH_TEST);
 	gl.viewport(0,0,canvas.width,canvas.height);
 
 	GetTexture('f-texture.png');
 	GetTexture('star.jpg');
 
-	var u_image0Location = gl.getUniformLocation(DefaultShader(), 'u_texture');
-	gl.uniform1i(u_image0Location, 0);  // texture unit 0
+	for (let i = 0; i < mapHeight; ++i) {
+		const row = [];
+		for (let j = 0; j < mapWidth; ++j) {
+			
+			row[j] = Renderable(j, i, TileShader(), GetTexture('f-texture.png'));
+		}
+		mapTiles[i] = row;
+	}
 
 	CreateMesh();
 
