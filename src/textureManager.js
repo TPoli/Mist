@@ -5,6 +5,7 @@ const textures = [];
 
 export const GetTexture = (src) => {
 
+	src = 'assets/' + src;
 	const existing = textures.find(element => element.src === src);
 	if (existing !== undefined) {
 		return existing.texture;
