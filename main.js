@@ -8,16 +8,22 @@ var gl = canvas.getContext('experimental-webgl');
 
 var renderableObject = Renderable(0, 0, DefaultShader(), GetTexture('f-texture.png'));
 
-const mapWidth = 7;
-const mapHeight = 5;
+const mapWidth = 20;
+const mapHeight = 20;
 const mapTiles = [];
+const g_iSpriteSize = 64; // in pixels
+
+const cameraPos = {
+	X:0,
+	Y:0
+};
 
 const CreateMesh = () => {
 	var vertices = [ 
-		-0.5,-0.5,0.0,	0,1,  //  1,1,1, // bottom left
-		0.5,0.5,0.0,    1,0,//    1,0,1, // top right
-		0.5,-0.5,0.0,   1,1,//  0,0,0,// bottom right
-		-0.5,0.5,0.0,   0,0 //  0,1,0// Top Left
+		-1.0,-1.0,0.0,	0,1,  //  1,1,1, // bottom left
+		1.0, 1.0, 0.0,    1,0,//    1,0,1, // top right
+		1.0,-1.0,0.0,   1,1,//  0,0,0,// bottom right
+		-1.0, 1.0,0.0,   0,0 //  0,1,0// Top Left
 	];
 	var indices = [0,1,2, 0,1,3];
 	
@@ -64,6 +70,23 @@ const Update = (deltaTime) => {
 		renderableObject.X += deltaTime;
 	}
 
+	if(InputManager().keys.a == 1) {
+		cameraPos.X -= deltaTime;
+	}
+	if(InputManager().keys.d == 1) {
+		cameraPos.X += deltaTime;
+	}
+	if(InputManager().keys.w == 1) {
+		cameraPos.Y += deltaTime * 3;
+	}
+	if(InputManager().keys.s == 1) {
+		cameraPos.Y -= deltaTime * 3;
+	}
+	cameraPos.X = Math.min(1, cameraPos.X);
+	cameraPos.Y = Math.min(1, cameraPos.Y);
+	const canvasTileCountY = canvas.offsetHeight / 64.0;
+	cameraPos.Y = Math.max(-(mapHeight - canvasTileCountY + 0.5), cameraPos.Y);
+
 	InputManager().Update(); // reset keys if released this frame
 };
 
@@ -73,12 +96,15 @@ const Render = () => {
 	const canvasWidth = canvas.offsetWidth;
 	const canvasHeight = canvas.offsetHeight;
 
-	// update canvas size for all shaders
+	// update all shaders
 	for(let i = 0; i < g_AllShaders.length; ++i) {
 		gl.useProgram(g_AllShaders[i].shader);
 		
 		var canvasSize = gl.getUniformLocation(g_AllShaders[i].shader, 'canvasSize');
 		gl.uniform2fv(canvasSize, [canvasWidth, canvasHeight]);
+
+		var cameraPosition = gl.getUniformLocation(g_AllShaders[i].shader, 'cameraPosition');
+		gl.uniform2fv(cameraPosition, [ cameraPos.X, cameraPos.Y]);
 	}
 	
 	for(let i = 0; i < mapTiles.length; ++i) {
@@ -114,12 +140,22 @@ export const main = () => {
 	for (let i = 0; i < mapHeight; ++i) {
 		const row = [];
 		for (let j = 0; j < mapWidth; ++j) {
-			
-			row[j] = Renderable(j, i, TileShader(), GetTexture('f-texture.png'));
+			if ((i + j) % 2 === 0) {
+				row[j] = Renderable(j, i, TileShader(), GetTexture('star.jpg'));
+			} else {
+				row[j] = Renderable(j, i, TileShader(), GetTexture('f-texture.png'));
+			}
 		}
 		mapTiles[i] = row;
 	}
 
+	// initialize all shaders
+	for(let i = 0; i < g_AllShaders.length; ++i) {
+		gl.useProgram(g_AllShaders[i].shader);
+		
+		var spriteSizeIndex = gl.getUniformLocation(g_AllShaders[i].shader, 'spriteSize');
+		gl.uniform1f(spriteSizeIndex, g_iSpriteSize);
+	}
 	CreateMesh();
 
 	window.requestAnimationFrame(loop);

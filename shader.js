@@ -1,5 +1,8 @@
 export const g_AllShaders = [];
 
+// need to double "step" used to indicate the ratio of pixels to clipspace units because
+// clipspace is -1 to 1 not 0 to 1
+
 const CreateShader = (a_sVert, a_sFrag) => {
 	var canvas = document.getElementById('my_Canvas');
 	var gl = canvas.getContext('experimental-webgl');
@@ -26,6 +29,45 @@ const CreateShader = (a_sVert, a_sFrag) => {
 	return shader;
 };
 
+const universalVertSource = 'attribute vec3 coordinates;'+
+'attribute vec2 UV;' +
+'varying vec2 vUV;' +
+'uniform vec2 position;' +
+'uniform vec2 canvasSize;' +
+'uniform vec2 cameraPosition;' +
+'uniform float spriteSize;';
+
+const universalVertSourceBody = 'vec2 halfStep = vec2((spriteSize / canvasSize.x), (spriteSize / canvasSize.y));' +
+'vec2 step = halfStep * 2.0;' +
+'vec2 cameraOffset = cameraPosition * step;' +
+'vec2 glOffset = vec2(-1.0,-1.0) + halfStep;'// moves origin form 0,0 to -1,-1
+;
+
+const defaultVertSource = universalVertSource +
+'void main(void) {' +
+	universalVertSourceBody + 
+	'vec3 vert = vec3(halfStep.x * coordinates.x + cameraOffset.x, halfStep.y * coordinates.y + cameraOffset.y, coordinates.z);' +
+	'gl_Position = vec4(vert + vec3(position,0), 1.0);' +
+   'vUV = UV;'+
+'}';
+
+const tileVertSource = universalVertSource +
+'void main(void) {' +
+	universalVertSourceBody +
+
+	'vec2 offset = (position * step) + cameraOffset + glOffset;' +
+	'vec3 vert = vec3(halfStep.x * coordinates.x, halfStep.y * coordinates.y, coordinates.z);' +
+	'gl_Position = vec4(vert + vec3(offset,0), 1.0);' +
+   'vUV = UV;'+
+'}';
+
+const defaultFragSource = 'precision mediump float;'+
+'varying vec2 vUV;'+
+'uniform sampler2D u_texture;' +
+'void main(void) {'+
+	'gl_FragColor = texture2D(u_texture, vUV);' +
+'}';
+
 export const TileShader = () => {
 
 	const existing = g_AllShaders.find(element => element.name === 'TileShader');
@@ -33,29 +75,9 @@ export const TileShader = () => {
 		return existing.shader;
 	}
 
-	var vertCode = 'attribute vec3 coordinates;'+
-            'attribute vec2 UV;' +
-            'varying vec2 vUV;' +
-            'uniform vec2 position;' +
-			'uniform vec2 canvasSize;' +
-			'void main(void) {' +
-				'vec2 step = vec2((64.0 / canvasSize.x), (64.0 / canvasSize.y));' +
-				'vec2 offset = (position * step) - vec2(1.0,1.0) + (step * 0.5);' +
-				'vec3 vert = vec3(step.x * coordinates.x, step.y * coordinates.y, coordinates.z);' +
-				'gl_Position = vec4(vert + vec3(offset,0), 1.0);' +
-               'vUV = UV;'+
-            '}';
-
-	var fragCode = 'precision mediump float;'+
-			'varying vec2 vUV;'+
-			'uniform sampler2D u_texture;' +
-            'void main(void) {'+
-				'gl_FragColor = texture2D(u_texture, vUV);' +
-            '}';
-
 	const newShader = {
 		name: 'TileShader',
-		shader: CreateShader(vertCode, fragCode)
+		shader: CreateShader(tileVertSource, defaultFragSource)
 	};
 
 	g_AllShaders.push(newShader);
@@ -69,27 +91,9 @@ export const DefaultShader = () => {
 		return existing.shader;
 	}
 
-	var vertCode = 'attribute vec3 coordinates;'+
-            'attribute vec2 UV;' +
-            'varying vec2 vUV;' +
-            'uniform vec2 position;' +
-			'uniform vec2 canvasSize;' +
-			'void main(void) {' +
-				'vec3 vert = vec3((64.0 / canvasSize.x) * coordinates.x, (64.0 / canvasSize.y) * coordinates.y, coordinates.z);' +
-				'gl_Position = vec4(vert + vec3(position,0), 1.0);' +
-               'vUV = UV;'+
-            '}';
-
-	var fragCode = 'precision mediump float;'+
-			'varying vec2 vUV;'+
-			'uniform sampler2D u_texture;' +
-            'void main(void) {'+
-				'gl_FragColor = texture2D(u_texture, vUV);' +
-            '}';
-
 	const newShader = {
 		name: 'DefaultShader',
-		shader: CreateShader(vertCode, fragCode)
+		shader: CreateShader(defaultVertSource, defaultFragSource)
 	};
 
 	g_AllShaders.push(newShader);
