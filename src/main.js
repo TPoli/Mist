@@ -151,6 +151,8 @@ var lastRender = 0;
 export const main = () => {
 
 	gl.clearColor(0.5, 0.5, 0.5, 0.9);
+	canvas.width = canvas.offsetWidth;
+	canvas.height = canvas.offsetHeight;
 	gl.viewport(0,0,canvas.width,canvas.height);
 	gl.enable(gl.BLEND);
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
