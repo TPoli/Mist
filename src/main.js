@@ -114,7 +114,6 @@ const Render = () => {
 
 	const canvasWidth = canvas.offsetWidth;
 	const canvasHeight = canvas.offsetHeight;
-
 	// update all shaders
 	for(let i = 0; i < g_AllShaders.length; ++i) {
 		gl.useProgram(g_AllShaders[i].shader);
