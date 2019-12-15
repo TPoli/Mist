@@ -6,7 +6,8 @@ import { GetTexture } from './textureManager.js';
 var canvas = document.getElementById('my_Canvas');
 var gl = canvas.getContext('experimental-webgl');
 
-var renderableObject = Renderable(0, 0, DefaultShader(), GetTexture('f-texture.png'));
+var renderableObject = Renderable(0, 0, DefaultShader(), GetTexture('blip.png'), [0,1,0,1]);
+var terminator = Renderable(0, 0, DefaultShader(), GetTexture('blip.png'), [1,0,0,1]);
 
 const mapWidth = 20;
 const mapHeight = 20;
@@ -70,6 +71,24 @@ const Update = (deltaTime) => {
 		renderableObject.X += deltaTime;
 	}
 
+	const terminatorDirection = {
+		X: renderableObject.X - terminator.X,
+		Y: renderableObject.Y - terminator.Y
+	};
+
+	// normalize direction vector
+	const terminatorDistance = Math.abs(terminatorDirection.X) + Math.abs(terminatorDirection.Y);
+	if(terminatorDistance > 0) {
+		terminatorDirection.X = terminatorDirection.X / terminatorDistance;
+		terminatorDirection.Y = terminatorDirection.Y / terminatorDistance;
+
+		const terminatorSpeed = 0.5;
+
+		terminator.X += terminatorDirection.X * deltaTime * terminatorSpeed;
+		terminator.Y += terminatorDirection.Y * deltaTime * terminatorSpeed;
+	}
+	
+
 	if(InputManager().keys.a == 1) {
 		cameraPos.X -= deltaTime;
 	}
@@ -114,6 +133,7 @@ const Render = () => {
 	}
 
 	renderableObject.Render();
+	terminator.Render();
 };
 
 function loop(timestamp) {
@@ -133,6 +153,8 @@ export const main = () => {
 
 	gl.clearColor(0.5, 0.5, 0.5, 0.9);
 	gl.viewport(0,0,canvas.width,canvas.height);
+	gl.enable(gl.BLEND);
+	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
 	GetTexture('f-texture.png');
 	GetTexture('star.jpg');

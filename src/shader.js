@@ -64,8 +64,9 @@ const tileVertSource = universalVertSource +
 const defaultFragSource = 'precision mediump float;'+
 'varying vec2 vUV;'+
 'uniform sampler2D u_texture;' +
+'uniform vec4 u_Colour;' +
 'void main(void) {'+
-	'gl_FragColor = texture2D(u_texture, vUV);' +
+	'gl_FragColor = texture2D(u_texture, vUV) * u_Colour;' +
 '}';
 
 export const TileShader = () => {
