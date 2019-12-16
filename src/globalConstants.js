@@ -1,0 +1,1 @@
+export const g_iSpriteSize = 64; // in pixels

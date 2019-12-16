@@ -3,6 +3,10 @@ var canvasManager = null;
 
 export class CanvasManager {
 	constructor() {
+		if(canvasManager !== null) {
+			return canvasManager;
+		}
+		canvasManager = this;
 		this.glCanvas = document.getElementById('my_Canvas');
 		this.gl = this.glCanvas.getContext('experimental-webgl');
 		this.fontCanvas = document.getElementById('uiCanvas');
@@ -17,12 +21,6 @@ export class CanvasManager {
 		this.gl.enable(this.gl.BLEND);
 		this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
 		this.gl.clearColor(0.5, 0.5, 0.5, 0.9);
-	}
-
-	static Instance(seed) {
-		if(canvasManager === null) {
-			canvasManager = new CanvasManager(seed);
-		}
 		return canvasManager;
 	}
 }

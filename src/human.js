@@ -7,4 +7,8 @@ export class Human extends Entity {
 		super(a_iX, a_iY, GetTexture('blip.png'), [0,1,0,1]);
 	}
 
+	Update() {
+		
+	}
+
 }

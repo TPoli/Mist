@@ -46,8 +46,9 @@ const universalVertSourceBody = 'vec2 halfStep = vec2((spriteSize / canvasSize.x
 const defaultVertSource = universalVertSource +
 'void main(void) {' +
 	universalVertSourceBody + 
-	'vec3 vert = vec3(halfStep.x * coordinates.x + cameraOffset.x, halfStep.y * coordinates.y + cameraOffset.y, coordinates.z);' +
-	'gl_Position = vec4(vert + vec3(position,0), 1.0);' +
+	'vec2 offset = (position * step) + cameraOffset + glOffset;' +
+	'vec3 vert = vec3(halfStep.x * coordinates.x, halfStep.y * coordinates.y, coordinates.z);' +
+	'gl_Position = vec4(vert + vec3(offset,0), 1.0);' +
    'vUV = UV;'+
 '}';
 
@@ -58,7 +59,7 @@ const tileVertSource = universalVertSource +
 	'vec2 offset = (position * step) + cameraOffset + glOffset;' +
 	'vec3 vert = vec3(halfStep.x * coordinates.x, halfStep.y * coordinates.y, coordinates.z);' +
 	'gl_Position = vec4(vert + vec3(offset,0), 1.0);' +
-   'vUV = UV;'+
+	'vUV = UV;'+
 '}';
 
 const defaultFragSource = 'precision mediump float;'+

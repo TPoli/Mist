@@ -1,49 +1,49 @@
 import { Human } from './human.js';
 import { InputManager } from './inputManager.js';
-import { Vector2 } from './vector2.js';
 import { Zombie } from './zombie.js';
 
-var entitymanager = null;
-
-var human = new Human(0, 0);
-var zombie = new Zombie(0, 0);
+var instance = null;
 
 export class EntityManager {
 	constructor(seed) {
-
-	}
-	static Instance(seed) {
-		if(entitymanager === null) {
-			entitymanager = new EntityManager(seed);
+		if(instance) {
+			return instance;
 		}
-		return EntityManager;
+		instance = this;
+		this.humans = [];
+		this.zombies = [];
+
+		this.humans.push(new Human(0, 0));
+		this.zombies.push(new Zombie(0, 0));
+
+		return instance;
 	}
 
 	Update(deltaTime) {
 		if(InputManager().keys.up == 1) {
-			human.position.Y += deltaTime;
+			this.humans[0].position.Y += deltaTime * 5;
 		}
 		if(InputManager().keys.down == 1) {
-			human.position.Y -= deltaTime;
+			this.humans[0].position.Y -= deltaTime * 5;
 		}
 		if(InputManager().keys.left == 1) {
-			human.position.X -= deltaTime;
+			this.humans[0].position.X -= deltaTime * 5;
 		}
 		if(InputManager().keys.right == 1) {
-			human.position.X += deltaTime;
+			this.humans[0].position.X += deltaTime * 5;
 		}
 
-		const zombieDirection = new Vector2(human.position.X - zombie.position.X, human.position.Y - zombie.position.Y);
-		zombieDirection.Normalize();
-	
-		const terminatorSpeed = 0.5;
-
-		zombie.position.X += zombieDirection.X * deltaTime * terminatorSpeed;
-		zombie.position.Y += zombieDirection.Y * deltaTime * terminatorSpeed;
+		for(let i = 0; i < this.zombies.length; ++i) {
+			this.zombies[i].Update(deltaTime);
+		}
 	}
 
 	Render(){
-		human.Render();
-		zombie.Render();
+		for(let i = 0; i < this.humans.length; ++i) {
+			this.humans[i].Render();
+		}
+		for(let i = 0; i < this.zombies.length; ++i) {
+			this.zombies[i].Render();
+		}
 	}
 }

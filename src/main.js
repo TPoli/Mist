@@ -6,13 +6,12 @@ import { CanvasManager } from './canvasManager.js';
 import { g_iMapHeight, Map } from './mapManager.js';
 import { Vector2 } from './vector2.js';
 import { EntityManager } from './entityManager.js';
+import { g_iSpriteSize } from './globalConstants.js';
 
 const seed = 1;
 
 const entityManager = new EntityManager(seed);
-const canvasManager = CanvasManager.Instance(seed);
-
-const g_iSpriteSize = 64; // in pixels
+const canvasManager = new CanvasManager(seed);
 
 const g_oMap = new Map(1);
 

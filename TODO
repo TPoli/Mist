@@ -1,0 +1,24 @@
+add .5,.5 to entity positions when calculating tile position
+
+a* for zombies
+adjust camera bounds so it can move further off the map (at lest enough to allow UI to not hide sections)
+
+implement seeded RNG
+
+add city buildings (just apartments initially)
+
+implement resources / looting
+
+implement combat
+implement spawning (max possable zombies)
+
+implement construction
+implement crafting
+
+implement noise
+
+implement human spawns
+implement human ai
+
+add perlin noise clouds
+add subways
