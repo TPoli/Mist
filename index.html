@@ -1,7 +1,10 @@
 <!doctype html>
 <html style ="width:100%; height:100%;">
     <body style ="width:100%; height:100%; overflow: hidden;">
-        <canvas style ="width:100%; height:100%;" id = "my_Canvas"></canvas>
+        <div style="position: relative; width:100%; height:100%;">
+            <canvas style ="width:100%; height:100%;" id = "my_Canvas"></canvas>
+            <canvas style ="position: absolute; left: 0px; top: 0px; z-index: 10; width:100%; height:100%;" id = "uiCanvas"></canvas>
+        </div>
 
         <script type="module">
             import { main } from './src/main.js';
