@@ -1,15 +1,28 @@
-export const glCanvas = document.getElementById('my_Canvas');
-export const gl = glCanvas.getContext('experimental-webgl');
-export const fontCanvas = document.getElementById('uiCanvas');
 
-export const InitializeCanvasManager = () => {
-	glCanvas.width = glCanvas.offsetWidth;
-	glCanvas.height = glCanvas.offsetHeight;
-	
-	fontCanvas.width = glCanvas.offsetWidth;
-	fontCanvas.height = glCanvas.offsetHeight;
+var canvasManager = null;
 
-	gl.viewport(0,0, glCanvas.width, glCanvas.height);
-	gl.enable(gl.BLEND);
-	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-};
+export class CanvasManager {
+	constructor() {
+		this.glCanvas = document.getElementById('my_Canvas');
+		this.gl = this.glCanvas.getContext('experimental-webgl');
+		this.fontCanvas = document.getElementById('uiCanvas');
+
+		this.glCanvas.width = this.glCanvas.offsetWidth;
+		this.glCanvas.height = this.glCanvas.offsetHeight;
+
+		this.fontCanvas.width = this.glCanvas.offsetWidth;
+		this.fontCanvas.height = this.glCanvas.offsetHeight;
+
+		this.gl.viewport(0,0, this.glCanvas.width, this.glCanvas.height);
+		this.gl.enable(this.gl.BLEND);
+		this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
+		this.gl.clearColor(0.5, 0.5, 0.5, 0.9);
+	}
+
+	static Instance(seed) {
+		if(canvasManager === null) {
+			canvasManager = new CanvasManager(seed);
+		}
+		return canvasManager;
+	}
+}

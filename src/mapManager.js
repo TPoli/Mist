@@ -1,5 +1,3 @@
-import { TileShader } from './shader.js';
-import { GetTexture } from './textureManager.js';
 import { Tile } from './tile.js';
 
 export const g_iMapWidth = 20;
@@ -9,17 +7,16 @@ export class Map {
 	
 	constructor(seed) {
 
-		const rand = Math.floor(Math.random() * 10);
-
 		this._tiles = [];
 
 		for (let i = 0; i < g_iMapHeight; ++i) {
 			const row = [];
 			for (let j = 0; j < g_iMapWidth; ++j) {
-				if ((i + j) % 2 === 0) {
-					row[j] = new Tile(j, i, GetTexture('star.jpg'));
+				const rand = Math.floor(Math.random() * 10);
+				if ((rand) < 8) {
+					row[j] = Tile.CreateRoad(j,i);
 				} else {
-					row[j] = new Tile(j, i, GetTexture('f-texture.png'));
+					row[j] = Tile.CreateWall(j, i);
 				}
 			}
 			this._tiles[i] = row;
