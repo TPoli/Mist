@@ -1,4 +1,5 @@
 import { Tile } from './tile.js';
+import { SeedRandom, RandomNext } from './prng.js';
 
 export const g_iMapWidth = 20;
 export const g_iMapHeight = 20;
@@ -12,12 +13,13 @@ export class Map {
 			return instance;
 		}
 		instance = this;
+		SeedRandom(seed);
 		this._tiles = [];
 
 		for (let i = 0; i < g_iMapHeight; ++i) {
 			const row = [];
 			for (let j = 0; j < g_iMapWidth; ++j) {
-				const rand = Math.floor(Math.random() * 10);
+				const rand = Math.floor(RandomNext() % 10);
 				if ((rand) < 8) {
 					row[j] = Tile.CreateRoad(j,i);
 				} else {

@@ -1,6 +1,7 @@
 import { Human } from './human.js';
 import { InputManager } from './inputManager.js';
 import { Zombie } from './zombie.js';
+import { SeedRandom } from './prng.js';
 
 var instance = null;
 
@@ -10,6 +11,8 @@ export class EntityManager {
 			return instance;
 		}
 		instance = this;
+		SeedRandom(seed);
+		//let r = RandomNext();
 		this.humans = [];
 		this.zombies = [];
 
