@@ -13,9 +13,6 @@ _,_,_,E		5,6,7,8
 
 path should look something like 1BR,2BL,2BR,3BL,8TL,8Center
 
-ensure that no section of the map is unreachable
-implement seeded RNG
-
 add city buildings (just apartments initially)
 
 implement resources / looting

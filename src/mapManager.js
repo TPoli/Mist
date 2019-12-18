@@ -1,9 +1,6 @@
 import { Tile } from './tile.js';
 import { SeedRandom, RandomNext } from './prng.js';
 
-export const g_iMapWidth = 20;
-export const g_iMapHeight = 20;
-
 let instance = null;
 
 export class Map {
@@ -16,11 +13,13 @@ export class Map {
 		SeedRandom(seed);
 		this._tiles = [];
 
-		for (let i = 0; i < g_iMapHeight; ++i) {
+		this._MapWidth = RandomNext() % 20 + 20;
+		this._MapHeight = RandomNext() % 20 + 20;
+
+		for (let i = 0; i < this.MapHeight; ++i) {
 			const row = [];
-			for (let j = 0; j < g_iMapWidth; ++j) {
-				const rand = Math.floor(RandomNext() % 10);
-				if ((rand) < 8) {
+			for (let j = 0; j < this.MapWidth; ++j) {
+				if (i % 3 === 0 || j % 3 === 0) {
 					row[j] = Tile.CreateRoad(j,i);
 				} else {
 					row[j] = Tile.CreateWall(j, i);
@@ -40,6 +39,12 @@ export class Map {
 	get tiles() {
 		return this._tiles;
 	}
+	get MapWidth() {
+		return this._MapWidth;
+	}
+	get MapHeight() {
+		return this._MapHeight;
+	}
 	GetTileXY(a_iX, a_iY) {
 		return this.tiles[a_iY][a_iX];
 	}
@@ -50,9 +55,9 @@ export class Map {
 		const section = [];
 
 		const startY = Math.max(a_vBotRight.Y,0);
-		const endY = Math.min(a_vTopLeft.Y + 1, g_iMapHeight);
+		const endY = Math.min(a_vTopLeft.Y + 1, this.MapHeight);
 		const startX = Math.max(a_vTopLeft.X,0);
-		const endX = Math.min(a_vBotRight.X + 1, g_iMapWidth);
+		const endX = Math.min(a_vBotRight.X + 1, this.MapWidth);
 
 		for(let i = startY; i < endY; ++i) {
 			section.push(this.tiles[i].slice(startX,endX));

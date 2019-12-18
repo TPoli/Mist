@@ -1,5 +1,5 @@
 import { Vector2 } from './vector2.js';
-import { g_iMapHeight, g_iMapWidth, Map } from './mapManager.js';
+import { Map } from './mapManager.js';
 
 const CreateNodes = (a_iWidth, a_iHeight, a_oaTiles) => {
 	const grid = [];
@@ -152,8 +152,8 @@ export class Pathfinder {
 	GetPath() {
 		const mapManager = new Map();
 
-		const vTopLeft = this.bHuman ? new Vector2(0, g_iMapHeight) : new Vector2(this.vStart.X - 5, this.vStart.Y + 5);
-		const vBottomRight = this.bHuman ? new Vector2(g_iMapWidth, 0) : new Vector2(this.vStart.X + 5, this.vStart.Y - 5);
+		const vTopLeft = this.bHuman ? new Vector2(0, mapManager.MapHeight) : new Vector2(this.vStart.X - 5, this.vStart.Y + 5);
+		const vBottomRight = this.bHuman ? new Vector2(mapManager.MapWidth, 0) : new Vector2(this.vStart.X + 5, this.vStart.Y - 5);
 
 		const tiles = mapManager.GetTileRange(vTopLeft, vBottomRight);
 		const gridWidth = tiles[0].length;
