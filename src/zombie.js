@@ -2,30 +2,41 @@ import { GetTexture } from './textureManager.js';
 import { Entity } from './entity.js';
 import { EntityManager } from './entityManager.js';
 import { Vector2 } from './vector2.js';
-import { Map } from './mapManager.js';
+import { Pathfinder } from './pathfinding.js';
 
 export class Zombie extends Entity {
 	
 	constructor(a_iX, a_iY) {
 		super(a_iX, a_iY, GetTexture('blip.png'), [1,0,0,1]);
+		this.vaPathToHuman = [];
 	}
 
 	Update(deltaTime) {
 		const entityManager = new EntityManager();
 		const targetHuman = entityManager.humans[0];
 
-		const mapManager = new Map();
-		const humanTile = mapManager.GetTileV2(targetHuman.position);
+		if(this.vaPathToHuman.length === 0) {
+			const humanTile = targetHuman.GetTile();
 
-		if(humanTile.pathable) {
-			const zombieDirection = new Vector2(targetHuman.position.X - this.position.X, targetHuman.position.Y - this.position.Y);
-			zombieDirection.Normalize();
-	
-			const terminatorSpeed = 2.5;
-
-			this.position.X += zombieDirection.X * deltaTime * terminatorSpeed;
-			this.position.Y += zombieDirection.Y * deltaTime * terminatorSpeed;
+			if(humanTile.pathable) {
+				const pathFinder = new Pathfinder(this.position.ToPoint(new Vector2(0.5,0.5)), targetHuman.position.ToPoint(new Vector2(0.5,0.5)));
+				this.vaPathToHuman = pathFinder.GetPath();
+			}
 		}
-		
+
+		if(this.vaPathToHuman.length > 0) {
+			const zombieDirection = this.vaPathToHuman[0].Subtract(this.position);
+			const distanceSquared = zombieDirection.DistanceSquared();
+			const zombieSpeed = 2.5;
+			
+			if(Math.sqrt(distanceSquared) < zombieSpeed * deltaTime) {
+				this.position = this.vaPathToHuman[0];
+				this.vaPathToHuman = this.vaPathToHuman.slice(1);
+			} else {
+				zombieDirection.Normalize();
+				this.position.X += zombieDirection.X * deltaTime * zombieSpeed;
+				this.position.Y += zombieDirection.Y * deltaTime * zombieSpeed;
+			}
+		}
 	}
 }

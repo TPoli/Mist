@@ -39,9 +39,23 @@ export class Map {
 		return this._tiles;
 	}
 	GetTileXY(a_iX, a_iY) {
-		return this.tiles[a_iX][a_iY];
+		return this.tiles[a_iY][a_iX];
 	}
 	GetTileV2(a_vPosition) {
-		return this.GetTileXY(Math.floor(a_vPosition.X), Math.floor(a_vPosition.Y));
+		return this.GetTileXY(Math.floor(a_vPosition.Y), Math.floor(a_vPosition.X));
+	}
+	GetTileRange(a_vTopLeft, a_vBotRight) {
+		const section = [];
+
+		const startY = Math.max(a_vBotRight.Y,0);
+		const endY = Math.min(a_vTopLeft.Y + 1, g_iMapHeight);
+		const startX = Math.max(a_vTopLeft.X,0);
+		const endX = Math.min(a_vBotRight.X + 1, g_iMapWidth);
+
+		for(let i = startY; i < endY; ++i) {
+			section.push(this.tiles[i].slice(startX,endX));
+		}
+
+		return section;
 	}
 }

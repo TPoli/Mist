@@ -1,8 +1,19 @@
-add .5,.5 to entity positions when calculating tile position
+zombies should use heatmaps / direct line of sight to path.
+humans should use A* to navigate to their tasks + away from zombies.
 
-a* for zombies
-adjust camera bounds so it can move further off the map (at lest enough to allow UI to not hide sections)
+path smoothing
+when using a tile for pathing instead of using the center point instead set the point to move to to be offset from the center based on entry point and exit point
+for example if exiting throughg the left and entering from the right set 2 points, 1 vertically centered
+30% from the right most edge and another vertically centered and 30% from the left
+take into account the ability to cut corners
 
+for example if in the following case 
+S,_,_,_		1,2,3,4
+_,_,_,E		5,6,7,8
+
+path should look something like 1BR,2BL,2BR,3BL,8TL,8Center
+
+ensure that no section of the map is unreachable
 implement seeded RNG
 
 add city buildings (just apartments initially)

@@ -3,7 +3,7 @@ import { InputManager } from './inputManager.js';
 import { RenderUI } from './uiManager.js';
 import { CreateMesh } from './mesh.js';
 import { CanvasManager } from './canvasManager.js';
-import { g_iMapHeight, Map } from './mapManager.js';
+import { g_iMapHeight, g_iMapWidth, Map } from './mapManager.js';
 import { Vector2 } from './vector2.js';
 import { EntityManager } from './entityManager.js';
 import { g_iSpriteSize } from './globalConstants.js';
@@ -20,24 +20,28 @@ const cameraPos = new Vector2(0,0);
 const Update = (deltaTime) => {
 
 	if(InputManager().keys.a == 1) {
-		cameraPos.X -= deltaTime;
+		cameraPos.X += deltaTime * 5;
 	}
 	if(InputManager().keys.d == 1) {
-		cameraPos.X += deltaTime;
+		cameraPos.X -= deltaTime * 5;
 	}
 	if(InputManager().keys.w == 1) {
-		cameraPos.Y += deltaTime * 3;
+		cameraPos.Y -= deltaTime * 5;
 	}
 	if(InputManager().keys.s == 1) {
-		cameraPos.Y -= deltaTime * 3;
+		cameraPos.Y += deltaTime * 5;
 	}
 
 	entityManager.Update(deltaTime);
 
-	cameraPos.X = Math.min(1, cameraPos.X);
-	cameraPos.Y = Math.min(1, cameraPos.Y);
-	const canvasTileCountY = canvasManager.glCanvas.offsetHeight / 64.0;
-	cameraPos.Y = Math.max(-(g_iMapHeight - canvasTileCountY + 0.5), cameraPos.Y);
+	const halfCanvasTileCountX = (canvasManager.glCanvas.offsetWidth / 64.0) / 2.0;
+	const halfCanvasTileCountY = (canvasManager.glCanvas.offsetHeight / 64.0) / 2.0;
+
+	cameraPos.X = Math.min(halfCanvasTileCountX, cameraPos.X);
+	cameraPos.X = Math.max(-g_iMapWidth + halfCanvasTileCountX, cameraPos.X);
+
+	cameraPos.Y = Math.min(halfCanvasTileCountY, cameraPos.Y);
+	cameraPos.Y = Math.max(-g_iMapHeight + halfCanvasTileCountY, cameraPos.Y);
 
 	InputManager().Update(); // reset keys if released this frame
 };
