@@ -7,15 +7,15 @@ const CreateShader = (a_sVert, a_sFrag) => {
 	var canvas = document.getElementById('my_Canvas');
 	var gl = canvas.getContext('experimental-webgl');
 
-	var vertShader = gl.createShader(gl.VERTEX_SHADER);
+	const vertShader = gl.createShader(gl.VERTEX_SHADER);
 	gl.shaderSource(vertShader, a_sVert);
 	gl.compileShader(vertShader);
 
-	var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+	const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
 	gl.shaderSource(fragShader, a_sFrag);
 	gl.compileShader(fragShader);
 
-	var shader = gl.createProgram();
+	const shader = gl.createProgram();
 
 	gl.attachShader(shader, vertShader); 
 	gl.attachShader(shader, fragShader);
@@ -23,7 +23,7 @@ const CreateShader = (a_sVert, a_sFrag) => {
 	gl.linkProgram(shader);
 
 	gl.useProgram(shader);
-	var u_image0Location = gl.getUniformLocation(shader, 'u_texture');
+	const u_image0Location = gl.getUniformLocation(shader, 'u_texture');
 	gl.uniform1i(u_image0Location, 0);
 
 	return shader;
@@ -72,7 +72,7 @@ const defaultFragSource = 'precision mediump float;'+
 
 export const TileShader = () => {
 
-	const existing = g_AllShaders.find(element => element.name === 'TileShader');
+	const existing = g_AllShaders.find( (element) => { return element.name === 'TileShader'; });
 	if (existing !== undefined) {
 		return existing.shader;
 	}
@@ -88,7 +88,7 @@ export const TileShader = () => {
 };
 
 export const DefaultShader = () => {
-	const existing = g_AllShaders.find(element => element.name === 'TileShader');
+	const existing = g_AllShaders.find((element) => { return element.name === 'DefaultShader'; });
 	if (existing !== undefined) {
 		return existing.shader;
 	}
