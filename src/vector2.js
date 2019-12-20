@@ -30,4 +30,9 @@ export class Vector2 {
 	DistanceSquared() {
 		return this.X * this.X + this.Y * this.Y;
 	}
+	static Clamp(a_vValue, a_vLower, a_vUpper) {
+		const X = Math.min(Math.max(a_vValue.X, a_vLower.X),a_vUpper.X);
+		const Y = Math.min(Math.max(a_vValue.Y, a_vLower.Y),a_vUpper.Y);
+		return new Vector2( X, Y);
+	}
 }
