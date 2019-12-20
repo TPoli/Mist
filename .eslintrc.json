@@ -62,7 +62,7 @@
         "init-declarations": ["error", "always"],
         "no-shadow": "error",
         "no-use-before-define": "error",
-        "max-len": ["error", { "code": 80 }],
+        "max-len": ["error", { "code": 100 }],
         "max-lines": ["error", 150],
         "arrow-body-style": ["error", "always"],
         "arrow-parens": ["error", "always"],

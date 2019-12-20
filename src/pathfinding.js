@@ -118,7 +118,7 @@ const AStar= (a_StartNode, a_EndNode) => {
 				distance: direction.Subtract(vSouthEast).DistanceSquared()
 			}
 		];
-		directions.sort((a,b) => a.distance < b.distance ? -1 : 1);
+		directions.sort((a,b) => { return a.distance < b.distance ? -1 : 1; } );
 		// the shortest distance from the above list should be the closest to the target
 		// it should now be highest priority direction first
 
@@ -162,8 +162,8 @@ export class Pathfinder {
 		const nodes = CreateNodes(gridWidth, gridHeight, tiles);
 		const vBottomLeftNode = nodes[0][0].position;
 		const vTopRightNode = nodes[gridWidth-1][gridHeight-1].position;
-		const vTargetNodePosition = new Vector2(Math.min(Math.max(this.vEnd.X, vBottomLeftNode.X),vTopRightNode.X), Math.min(Math.max(this.vEnd.Y, vBottomLeftNode.Y),vTopRightNode.Y));
-		const vStartNodePosition = new Vector2(Math.min(Math.max(this.vStart.X, vBottomLeftNode.X),vTopRightNode.X), Math.min(Math.max(this.vStart.Y, vBottomLeftNode.Y),vTopRightNode.Y));
+		const vTargetNodePosition = Vector2.Clamp(this.vEnd, vBottomLeftNode, vTopRightNode);
+		const vStartNodePosition = Vector2.Clamp(this.vStart, vBottomLeftNode ,vTopRightNode);
 		
 		const vStartNodeIndex = vStartNodePosition.Subtract(vBottomLeftNode);
 		const vEndNodeIndex = vTargetNodePosition.Subtract(vBottomLeftNode);
