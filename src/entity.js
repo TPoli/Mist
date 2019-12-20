@@ -7,10 +7,13 @@ export class Entity extends Renderable {
 	
 	constructor(a_iX, a_iY, a_oTexture, a_oColour) {
 		super(a_iX, a_iY, DefaultShader(), a_oTexture, a_oColour);
+		// eslint-disable-next-line no-magic-numbers
+		this.center = new Vector2(0.5,0.5);
 	}
 	GetTile() {
-		const mapManager = new Map();
-		const vTileIndex = this.position.ToPoint(new Vector2(0.5,0.5));
-		return mapManager.GetTileXY(vTileIndex.X, vTileIndex.Y);
+		return new Map().GetTileV2(this.GetTileIndex());
+	}
+	GetTileIndex() {
+		return this.position.ToPoint(this.center);
 	}
 }

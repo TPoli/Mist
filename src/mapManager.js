@@ -3,6 +3,10 @@ import { SeedRandom, RandomNext } from './prng.js';
 
 let instance = null;
 
+const iMinMapSize = 20;
+const iMapSizeRandomness = 20;
+const iBlockSize = 2;
+
 export class Map {
 	
 	constructor(seed) {
@@ -13,13 +17,13 @@ export class Map {
 		SeedRandom(seed);
 		this._tiles = [];
 
-		this._MapWidth = RandomNext() % 20 + 20;
-		this._MapHeight = RandomNext() % 20 + 20;
+		this._MapWidth = RandomNext() % (iMapSizeRandomness + 1) + iMinMapSize;
+		this._MapHeight = RandomNext() % (iMapSizeRandomness + 1) + iMinMapSize;
 
 		for (let i = 0; i < this.MapHeight; ++i) {
 			const row = [];
 			for (let j = 0; j < this.MapWidth; ++j) {
-				if (i % 3 === 0 || j % 3 === 0) {
+				if (i % (iBlockSize + 1) === 0 || j % (iBlockSize + 1) === 0) {
 					row[j] = Tile.CreateRoad(j,i);
 				} else {
 					row[j] = Tile.CreateWall(j, i);

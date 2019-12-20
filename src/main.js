@@ -18,18 +18,19 @@ const g_oMap = new Map(1);
 const cameraPos = new Vector2(0,0);
 
 const Update = (deltaTime) => {
+	const cameraSpeed = 5;
 
-	if(InputManager().keys.a == 1) {
-		cameraPos.X += deltaTime * 5;
+	if(InputManager().keys.a === 1) {
+		cameraPos.X += deltaTime * cameraSpeed;
 	}
-	if(InputManager().keys.d == 1) {
-		cameraPos.X -= deltaTime * 5;
+	if(InputManager().keys.d === 1) {
+		cameraPos.X -= deltaTime * cameraSpeed;
 	}
-	if(InputManager().keys.w == 1) {
-		cameraPos.Y -= deltaTime * 5;
+	if(InputManager().keys.w === 1) {
+		cameraPos.Y -= deltaTime * cameraSpeed;
 	}
-	if(InputManager().keys.s == 1) {
-		cameraPos.Y += deltaTime * 5;
+	if(InputManager().keys.s === 1) {
+		cameraPos.Y += deltaTime * cameraSpeed;
 	}
 
 	entityManager.Update(deltaTime);
@@ -49,17 +50,13 @@ const Update = (deltaTime) => {
 const Render = () => {
 	canvasManager.gl.clear(canvasManager.gl.COLOR_BUFFER_BIT);
 
-	const canvasWidth = canvasManager.glCanvas.offsetWidth;
-	const canvasHeight = canvasManager.glCanvas.offsetHeight;
+	const vCanvasSize = new Vector2(canvasManager.glCanvas.offsetWidth, canvasManager.glCanvas.offsetHeight);
 	// update all shaders
 	for(let i = 0; i < g_AllShaders.length; ++i) {
-		canvasManager.gl.useProgram(g_AllShaders[i].shader);
+		g_AllShaders[i].shader.Bind();
 		
-		var canvasSize = canvasManager.gl.getUniformLocation(g_AllShaders[i].shader, 'canvasSize');
-		canvasManager.gl.uniform2fv(canvasSize, [canvasWidth, canvasHeight]);
-
-		var cameraPosition = canvasManager.gl.getUniformLocation(g_AllShaders[i].shader, 'cameraPosition');
-		canvasManager.gl.uniform2fv(cameraPosition, [ cameraPos.X, cameraPos.Y]);
+		g_AllShaders[i].shader.SetUniform2f('canvasSize', vCanvasSize);
+		g_AllShaders[i].shader.SetUniform2f('cameraPosition', cameraPos);
 	}
 	
 	g_oMap.Render();
@@ -86,10 +83,9 @@ export const main = () => {
 
 	// initialize all shaders
 	for(let i = 0; i < g_AllShaders.length; ++i) {
-		canvasManager.gl.useProgram(g_AllShaders[i].shader);
+		g_AllShaders[i].shader.Bind();
 		
-		var spriteSizeIndex = canvasManager.gl.getUniformLocation(g_AllShaders[i].shader, 'spriteSize');
-		canvasManager.gl.uniform1f(spriteSizeIndex, g_iSpriteSize);
+		g_AllShaders[i].shader.SetUniform1f('spriteSize', g_iSpriteSize);
 	}
 	CreateMesh();
 

@@ -27,14 +27,14 @@ export const CreateMesh = () => {
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, Index_Buffer);
 	
 	for(let i = 0; i < g_AllShaders.length; ++i) {
-		gl.useProgram(g_AllShaders[i].shader);
+		g_AllShaders[i].shader.Bind();
 		//Get the attribute location
-		var coord = gl.getAttribLocation(g_AllShaders[i].shader, 'coordinates');
+		const coord = gl.getAttribLocation(g_AllShaders[i].shader.shaderID, 'coordinates');
 		gl.vertexAttribPointer(coord, 3, gl.FLOAT, false, 20, 0);
 		gl.enableVertexAttribArray(coord);
 		
 		// get the attribute location
-		var uv = gl.getAttribLocation(g_AllShaders[i].shader, 'UV');
+		const uv = gl.getAttribLocation(g_AllShaders[i].shader.shaderID, 'UV');
 		gl.vertexAttribPointer(uv, 2, gl.FLOAT, false, 20, 12) ;
 		gl.enableVertexAttribArray(uv);
 	}

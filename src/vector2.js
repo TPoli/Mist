@@ -35,4 +35,7 @@ export class Vector2 {
 		const Y = Math.min(Math.max(a_vValue.Y, a_vLower.Y),a_vUpper.Y);
 		return new Vector2( X, Y);
 	}
+	ToArray() {
+		return [this.X, this.Y];
+	}
 }

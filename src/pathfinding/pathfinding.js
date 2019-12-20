@@ -1,25 +1,13 @@
-import { Vector2 } from './vector2.js';
-import { Map } from './mapManager.js';
+import { Vector2 } from '../vector2.js';
+import { Map } from '../mapManager.js';
+import { PathNode } from './pathNode.js';
 
 const CreateNodes = (a_iWidth, a_iHeight, a_oaTiles) => {
 	const grid = [];
 	for(let i = 0; i < a_iWidth; ++i) {
 		grid[i] = [];
 		for(let j = 0; j < a_iHeight; ++j) {
-			grid[i][j] = {
-				pathable: a_oaTiles[j][i].pathable,
-				position: a_oaTiles[j][i].position.Copy(),
-				connections: {
-					NW: null,
-					N: null,
-					NE: null,
-					E: null,
-					SE: null,
-					S: null,
-					SW: null,
-					W: null
-				}
-			};
+			grid[i][j] = new PathNode(a_oaTiles[j][i]);
 		}
 	}
 
@@ -152,8 +140,10 @@ export class Pathfinder {
 	GetPath() {
 		const mapManager = new Map();
 
-		const vTopLeft = this.bHuman ? new Vector2(0, mapManager.MapHeight) : new Vector2(this.vStart.X - 5, this.vStart.Y + 5);
-		const vBottomRight = this.bHuman ? new Vector2(mapManager.MapWidth, 0) : new Vector2(this.vStart.X + 5, this.vStart.Y - 5);
+		const zombiePathRadius = 5;
+
+		const vTopLeft = this.bHuman ? new Vector2(0, mapManager.MapHeight) : new Vector2(this.vStart.X - zombiePathRadius, this.vStart.Y + zombiePathRadius);
+		const vBottomRight = this.bHuman ? new Vector2(mapManager.MapWidth, 0) : new Vector2(this.vStart.X + zombiePathRadius, this.vStart.Y - zombiePathRadius);
 
 		const tiles = mapManager.GetTileRange(vTopLeft, vBottomRight);
 		const gridWidth = tiles[0].length;
