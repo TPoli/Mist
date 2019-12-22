@@ -14,4 +14,19 @@ export class PathNode {
 			W: null
 		};
 	}
+	Unlink(a_oOther) {
+		for (let key of Object.keys(a_oOther.connections)) {
+			if(a_oOther.connections[key] === this) {
+				a_oOther.connections[key] = null;
+				break;
+			}
+		}
+		
+		for (let key of Object.keys(this.connections)) {
+			if(this.connections[key] === a_oOther) {
+				this.connections[key] = null;
+				break;
+			}
+		}
+	}
 }
