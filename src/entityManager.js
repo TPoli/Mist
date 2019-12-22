@@ -23,17 +23,18 @@ export class EntityManager {
 	}
 
 	Update(deltaTime) {
-		if(InputManager().keys.up == 1) {
-			this.humans[0].position.Y += deltaTime * 5;
+		const humanSpeed = 5;
+		if(InputManager().keys.up.keyState === 1) {
+			this.humans[0].position.Y += deltaTime * humanSpeed;
 		}
-		if(InputManager().keys.down == 1) {
-			this.humans[0].position.Y -= deltaTime * 5;
+		if(InputManager().keys.down.keyState === 1) {
+			this.humans[0].position.Y -= deltaTime * humanSpeed;
 		}
-		if(InputManager().keys.left == 1) {
-			this.humans[0].position.X -= deltaTime * 5;
+		if(InputManager().keys.left.keyState === 1) {
+			this.humans[0].position.X -= deltaTime * humanSpeed;
 		}
-		if(InputManager().keys.right == 1) {
-			this.humans[0].position.X += deltaTime * 5;
+		if(InputManager().keys.right.keyState === 1) {
+			this.humans[0].position.X += deltaTime * humanSpeed;
 		}
 
 		for(let i = 0; i < this.zombies.length; ++i) {

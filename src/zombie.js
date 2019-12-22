@@ -1,7 +1,7 @@
 import { GetTexture } from './textureManager.js';
 import { Entity } from './entity.js';
 import { EntityManager } from './entityManager.js';
-import { Pathfinder } from './pathfinding/pathfinding.js';
+import { ZombiePathfinder } from './pathfinding/zombiePath.js';
 
 export class Zombie extends Entity {
 	
@@ -14,13 +14,10 @@ export class Zombie extends Entity {
 		const entityManager = new EntityManager();
 		const targetHuman = entityManager.humans[0];
 
-		if(this.vaPathToHuman.length === 0) {
-			const humanTile = targetHuman.GetTile();
-
-			if(humanTile.pathable) {
-				const pathFinder = new Pathfinder(this.GetTileIndex(), targetHuman.GetTileIndex());
-				this.vaPathToHuman = pathFinder.GetPath();
-			}
+		if(this.vaPathToHuman.length === 0 && targetHuman.GetTile().pathable) {
+			const vTargetTileIndex = targetHuman.GetTileIndex();
+			const pathFinder = new ZombiePathfinder(this.GetTileIndex(), vTargetTileIndex);
+			this.vaPathToHuman = pathFinder.GetPath();
 		}
 
 		if(this.vaPathToHuman.length > 0) {

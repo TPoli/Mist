@@ -1,46 +1,29 @@
+const KeyStatus = {
+	UP: 0,
+	DOWN: 1,
+	RELEASED: 2
+};
 
 var m_InputManager = null;
 
 const KeyEventProcessor = (keyCode, keyState) => {
-	switch (keyCode) {
-	case 37:
-		m_InputManager.keys.left = keyState;
-		break;
-	case 38:
-		m_InputManager.keys.up = keyState;
-		break;
-	case 39:
-		m_InputManager.keys.right = keyState;
-		break;
-	case 40:
-		m_InputManager.keys.down = keyState;
-		break;
-	case 32:
-		m_InputManager.keys.space = keyState;
-		break;
-	case 87:
-		m_InputManager.keys.w = keyState;
-		break;
-	case 65:
-		m_InputManager.keys.a = keyState;
-		break;
-	case 83:
-		m_InputManager.keys.s = keyState;
-		break;
-	case 68:
-		m_InputManager.keys.d = keyState;
-		break;
-	default:
+	const keyDataKey = Object.keys(m_InputManager.keys).find( (key) => {
+		return m_InputManager.keys[key].code === keyCode;
+	});
+
+	if(keyDataKey !== undefined) {
+		m_InputManager.keys[keyDataKey].keyState = keyState;
+	} else {
 		console.log(keyCode);
 	}
 };
 
 const KeyDownCallback = (event) => {
-	KeyEventProcessor(event.keyCode, 1);
+	KeyEventProcessor(event.keyCode, KeyStatus.DOWN);
 };
 
 const KeyUpCallback = (event) => {
-	KeyEventProcessor(event.keyCode, 2);
+	KeyEventProcessor(event.keyCode, KeyStatus.RELEASED);
 };
 
 export const InputManager = () => {
@@ -49,17 +32,43 @@ export const InputManager = () => {
 	}
 
 	m_InputManager = {
-		// 0 = up(not pressed), 1 = down, 2 = released(this frame)
 		keys: {
-			left: 0,
-			right: 0,
-			up: 0,
-			down: 0,
-			space: 0,
-			w:0,
-			a:0,
-			s:0,
-			d:0
+			space: {
+				status: KeyStatus.UP,
+				code: 32
+			},
+			left: {
+				status: KeyStatus.UP,
+				code: 37
+			},
+			up: {
+				status: KeyStatus.UP,
+				code: 38
+			},
+			right: {
+				status: KeyStatus.UP,
+				code: 39
+			},
+			down: {
+				status: KeyStatus.UP,
+				code: 40
+			},
+			w:{
+				status: KeyStatus.UP,
+				code: 87
+			},
+			a:{
+				status: KeyStatus.UP,
+				code: 65
+			},
+			s:{
+				status: KeyStatus.UP,
+				code: 83
+			},
+			d:{
+				status: KeyStatus.UP,
+				code: 68
+			}
 		}
 	};
 
@@ -68,9 +77,9 @@ export const InputManager = () => {
 
 	m_InputManager.Update = () => {
 
-		for (var key of Object.keys(m_InputManager.keys)) {
-			if(m_InputManager.keys[key] == 2) {
-				m_InputManager.keys[key] = 0;
+		for (const key of Object.keys(m_InputManager.keys)) {
+			if(m_InputManager.keys[key] === KeyStatus.RELEASED) {
+				m_InputManager.keys[key] = KeyStatus.UP;
 			}
 		}
 	};

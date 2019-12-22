@@ -25,11 +25,16 @@ export class Tile extends Renderable {
 		const canvasManager = new CanvasManager();
 		const halfStepX = g_iSpriteSize / canvasManager.glCanvas.offsetWidth;
 		const halfStepY = g_iSpriteSize / canvasManager.glCanvas.offsetWidth;
+
+		const vLeft = new Vector2(-halfStepX,0);
+		const vRight = new Vector2(halfStepX,0);
+		const vUp = new Vector2(0, halfStepY);
+		const vDown = new Vector2(0, -halfStepY);
 		return [
-			new Line(this.position.Add(new Vector2(-halfStepX, -halfStepY), new Vector2(halfStepX, -halfStepY))),
-			new Line(this.position.Add(new Vector2(-halfStepX, halfStepY), new Vector2(halfStepX, halfStepY))),
-			new Line(this.position.Add(new Vector2(-halfStepX, -halfStepY), new Vector2(-halfStepX, halfStepY))),
-			new Line(this.position.Add(new Vector2(halfStepX, -halfStepY), new Vector2(halfStepX, halfStepY)))
+			new Line(this.position.Add(vLeft.Add(vDown)), this.position.Add(vRight.Add(vDown))),
+			new Line(this.position.Add(vLeft.Add(vUp)), this.position.Add(vRight.Add(vUp))),
+			new Line(this.position.Add(vLeft.Add(vDown)), this.position.Add(vLeft.Add(vUp))),
+			new Line(this.position.Add(vRight.Add(vDown)), this.position.Add(vRight.Add(vUp)))
 		];
 	}
 }

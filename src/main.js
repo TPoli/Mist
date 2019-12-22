@@ -9,6 +9,7 @@ import { EntityManager } from './entityManager.js';
 import { g_iSpriteSize } from './globalConstants.js';
 
 const seed = 1;
+var previousTimestamp = 0;
 
 const entityManager = new EntityManager(seed);
 const canvasManager = new CanvasManager(seed);
@@ -20,16 +21,16 @@ const cameraPos = new Vector2(0,0);
 const Update = (deltaTime) => {
 	const cameraSpeed = 5;
 
-	if(InputManager().keys.a === 1) {
+	if(InputManager().keys.a.keyState === 1) {
 		cameraPos.X += deltaTime * cameraSpeed;
 	}
-	if(InputManager().keys.d === 1) {
+	if(InputManager().keys.d.keyState === 1) {
 		cameraPos.X -= deltaTime * cameraSpeed;
 	}
-	if(InputManager().keys.w === 1) {
+	if(InputManager().keys.w.keyState === 1) {
 		cameraPos.Y -= deltaTime * cameraSpeed;
 	}
-	if(InputManager().keys.s === 1) {
+	if(InputManager().keys.s.keyState === 1) {
 		cameraPos.Y += deltaTime * cameraSpeed;
 	}
 
@@ -66,18 +67,19 @@ const Render = () => {
 	RenderUI();
 };
 
+const msPerSecond = 1000;
 function loop(timestamp) {
-	var deltaTime = (timestamp - lastRender) / 1000;
+	var deltaTime = (timestamp - previousTimestamp) / msPerSecond;
 
 	Update(deltaTime);
 
 	Render();
 
-	lastRender = timestamp;
+	previousTimestamp = timestamp;
 	window.requestAnimationFrame(loop);
 }
 
-var lastRender = 0;
+
 
 export const main = () => {
 

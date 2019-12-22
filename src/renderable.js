@@ -18,6 +18,7 @@ export class Renderable {
 		this.shader.SetUniform2f('position', this.position);
 		this.shader.SetUniform4f('u_Colour', this.colour);
 
+		// eslint-disable-next-line no-magic-numbers
 		gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT,0); // always render 2 triangles
 	}
 }
