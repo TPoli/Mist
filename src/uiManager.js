@@ -1,6 +1,6 @@
 
-var fontCanvas = document.getElementById('uiCanvas');
-var ctx = fontCanvas.getContext('2d');
+var uiCanvas = document.getElementById('uiCanvas');
+var ctx = uiCanvas.getContext('2d');
 
 export const RenderText = (a_fX, a_fY, a_sText) => {
 	ctx.font = '30px Arial';
@@ -10,11 +10,11 @@ export const RenderText = (a_fX, a_fY, a_sText) => {
 };
 
 export const RenderUI = () => {
-	const bottom = fontCanvas.clientHeight;
+	const bottom = uiCanvas.clientHeight;
 
 	const toolboxWidth = 300;
 	const toolboxHeight = 200;
-	ctx.clearRect(0,0, fontCanvas.clientWidth,fontCanvas.clientHeight);
+	ctx.clearRect(0,0, uiCanvas.clientWidth, uiCanvas.clientHeight);
 
 	ctx.fillStyle = '#000000';
 	ctx.fillRect(0, bottom - toolboxHeight, toolboxWidth, toolboxHeight);

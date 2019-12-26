@@ -9,13 +9,13 @@ export class CanvasManager {
 		canvasManager = this;
 		this.glCanvas = document.getElementById('my_Canvas');
 		this.gl = this.glCanvas.getContext('experimental-webgl');
-		this.fontCanvas = document.getElementById('uiCanvas');
+		this.uiCanvas = document.getElementById('uiCanvas');
 
 		this.glCanvas.width = this.glCanvas.offsetWidth;
 		this.glCanvas.height = this.glCanvas.offsetHeight;
 
-		this.fontCanvas.width = this.glCanvas.offsetWidth;
-		this.fontCanvas.height = this.glCanvas.offsetHeight;
+		this.uiCanvas.width = this.glCanvas.offsetWidth;
+		this.uiCanvas.height = this.glCanvas.offsetHeight;
 
 		this.gl.viewport(0,0, this.glCanvas.width, this.glCanvas.height);
 		this.gl.enable(this.gl.BLEND);
