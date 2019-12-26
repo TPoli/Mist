@@ -1,3 +1,6 @@
+import { Vector2 } from './vector2.js';
+import { CanvasManager } from './canvasManager.js';
+
 const KeyStatus = {
 	UP: 0,
 	DOWN: 1,
@@ -24,6 +27,13 @@ const KeyDownCallback = (event) => {
 
 const KeyUpCallback = (event) => {
 	KeyEventProcessor(event.keyCode, KeyStatus.RELEASED);
+};
+
+const GetMousePos = (evt) => {
+	const canvasManager = new CanvasManager();
+
+	var rect = canvasManager.uiCanvas.getBoundingClientRect();
+	return new Vector2(evt.clientX - rect.left, evt.clientY - rect.top);
 };
 
 export const InputManager = () => {
@@ -68,19 +78,37 @@ export const InputManager = () => {
 			d:{
 				status: KeyStatus.UP,
 				code: 68
-			}
+			},
+			mousePosition: new Vector2(0,0),
+			leftMouseState: KeyStatus.UP
 		}
 	};
 
 	document.addEventListener('keydown', KeyDownCallback);
 	document.addEventListener('keyup', KeyUpCallback);
 
-	m_InputManager.Update = () => {
+	const canvasManager = new CanvasManager();
+	canvasManager.uiCanvas.addEventListener('mousemove', (evt) => {
+		m_InputManager.mousePosition = GetMousePos(evt);
+	}, false);
+
+	canvasManager.uiCanvas.addEventListener('mousedown', () => { 
+		m_InputManager.leftMouseState = KeyStatus.DOWN;
+	});
+
+	canvasManager.uiCanvas.addEventListener('mouseup', () => { 
+		m_InputManager.leftMouseState = KeyStatus.RELEASED;
+	});
+
+	m_InputManager.PostUpdate = () => {
 
 		for (const key of Object.keys(m_InputManager.keys)) {
 			if(m_InputManager.keys[key] === KeyStatus.RELEASED) {
 				m_InputManager.keys[key] = KeyStatus.UP;
 			}
+		}
+		if(m_InputManager.leftMouseState === KeyStatus.RELEASED) {
+			m_InputManager.leftMouseState = KeyStatus.UP;
 		}
 	};
 

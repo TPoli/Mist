@@ -1,6 +1,6 @@
 import { g_AllShaders } from './shader.js';
 import { InputManager } from './inputManager.js';
-import { RenderUI } from './uiManager.js';
+import { RenderUI } from './ui/uiManager.js';
 import { CreateMesh } from './mesh.js';
 import { CanvasManager } from './canvasManager.js';
 import { Map } from './mapManager.js';
@@ -45,7 +45,7 @@ const Update = (deltaTime) => {
 	cameraPos.Y = Math.min(halfCanvasTileCountY, cameraPos.Y);
 	cameraPos.Y = Math.max(-g_oMap.MapHeight + halfCanvasTileCountY, cameraPos.Y);
 
-	InputManager().Update(); // reset keys if released this frame
+	InputManager().PostUpdate(); // reset keys if released this frame
 };
 
 const Render = () => {
