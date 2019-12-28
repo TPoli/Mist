@@ -15,12 +15,6 @@ export class UIManager{
 
 		this.toolbox = new Toolbox();
 	}
-	RenderText(a_fX, a_fY, a_sText) {
-		ctx.font = '30px Arial';
-		ctx.fillStyle = 'red';
-		ctx.textAlign = 'center';
-		ctx.fillText(a_sText, a_fX, a_fY);
-	}
 
 	Render() {
 		this.toolbox.Render();
