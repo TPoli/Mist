@@ -11,15 +11,20 @@ export class Button {
 		this.ctx = canvasManager.uiCanvas.getContext('2d');
 
 		this.callback = a_Callback;
-		const bottom = canvasManager.uiCanvas.clientHeight;
-		this.vPosition = new Vector2(a_vPosition.X, bottom - a_vPosition.Y);
+		this.SetPosition(a_vPosition);
 		this.font = a_font;
 		this.text = a_sText;
 		this.ctx.font = this.font;
+		this.hPadding = 7;
+		this.vPadding = 5;
 		this.SetBounds();
 	}
+	SetPosition(a_vPosition) {
+		const canvasManager = new CanvasManager();
+		const bottom = canvasManager.uiCanvas.clientHeight;
+		this.vPosition = new Vector2(a_vPosition.X, bottom - a_vPosition.Y);
+	}
 	Render() {
-
 		this.ctx.font = this.font;
 		this.ctx.fillStyle = 'red';
 		this.ctx.textAlign = 'left';
@@ -28,20 +33,18 @@ export class Button {
 		this.DrawBorder();
 	}
 	SetBounds() {
-		// '15px Arial' is 21px tall
-		this.textDimensions = new Vector2(this.ctx.measureText(this.text).width, 21);
+		// '15px Arial' is 10px tall
+		this.textDimensions = new Vector2(this.ctx.measureText(this.text).width, 10);
+		this.radius = gRadius;
 
 		const width = this.textDimensions.X;
 		const height = this.textDimensions.Y;
-		const halfHeight = height / 2;
-		const hPadding = 7;
-		const vPadding = 5;
 
 		this.inner = {
-			top: this.vPosition.Y - halfHeight - vPadding + gRadius,
-			left: this.vPosition.X - hPadding + gRadius,
-			right: this.vPosition.X + width + hPadding - gRadius,
-			bottom: this.vPosition.Y + vPadding - gRadius,
+			top: this.vPosition.Y - height - this.vPadding + gRadius,
+			left: this.vPosition.X - this.hPadding + gRadius,
+			right: this.vPosition.X + width + this.hPadding - gRadius,
+			bottom: this.vPosition.Y + this.vPadding - gRadius,
 		};
 
 		this.outer = {
