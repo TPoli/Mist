@@ -2,9 +2,6 @@ import { Toolbox } from './toolbox.js';
 
 var m_Instance = null;
 
-var uiCanvas = document.getElementById('uiCanvas');
-var ctx = uiCanvas.getContext('2d');
-
 export class UIManager{
 	constructor() {
 
