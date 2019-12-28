@@ -2,19 +2,26 @@ import { Vector2 } from '../vector2.js';
 
 import { CanvasManager } from '../canvasManager.js';
 import { InputManager, KeyStatus } from '../inputManager.js';
+import { CreateFont, GetFontHeight } from './fonts.js';
 
 const gRadius = 8;
 
 export class Button {
-	constructor(a_sText, a_vPosition, a_Callback, a_font = '15px Arial') {
+	constructor(a_sText, a_vPosition, a_Callback) {
 		const canvasManager = new CanvasManager();
 		this.ctx = canvasManager.uiCanvas.getContext('2d');
 
+		this.m_iFontSize = 15;
+		this.m_sFont = 'Arial';
+		this.m_textColour = 'red';
+		this.m_hoverTextColour = 'white';
+		this.m_outlineColour = 'red';
+		this.m_hoverOutlineColour = 'green';
+
 		this.callback = a_Callback;
 		this.SetPosition(a_vPosition);
-		this.font = a_font;
 		this.text = a_sText;
-		this.ctx.font = this.font;
+		this.ctx.font = CreateFont(this.m_sFont, this.m_iFontSize);
 		this.hPadding = 7;
 		this.vPadding = 5;
 		this.SetBounds();
@@ -25,20 +32,25 @@ export class Button {
 		this.vPosition = new Vector2(a_vPosition.X, bottom - a_vPosition.Y);
 	}
 	Render() {
-		this.ctx.font = this.font;
-		this.ctx.fillStyle = 'red';
+		this.ctx.font = CreateFont(this.m_sFont, this.m_iFontSize);
+		
 		this.ctx.textAlign = 'left';
-		this.ctx.strokeStyle = 'red';
+
+		const inputManager = InputManager();
+		const bHovered = this.Contains(inputManager.mouse.position);
+		
+		this.ctx.fillStyle = bHovered ? this.m_hoverTextColour : this.m_textColour;
+		this.ctx.strokeStyle = bHovered ? this.m_hoverOutlineColour : this.m_outlineColour;
+
 		this.ctx.fillText(this.text, this.vPosition.X, this.vPosition.Y);
 		this.DrawBorder();
 	}
 	SetBounds() {
-		// '15px Arial' is 10px tall
-		this.textDimensions = new Vector2(this.ctx.measureText(this.text).width, 10);
 		this.radius = gRadius;
 
-		const width = this.textDimensions.X;
-		const height = this.textDimensions.Y;
+		const width = this.ctx.measureText(this.text).width;
+		const height = GetFontHeight(this.m_sFont, this.m_iFontSize);
+		this.textDimensions = new Vector2(width, height);
 
 		this.inner = {
 			top: this.vPosition.Y - height - this.vPadding + gRadius,
