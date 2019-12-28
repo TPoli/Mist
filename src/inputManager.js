@@ -1,7 +1,7 @@
 import { Vector2 } from './vector2.js';
 import { CanvasManager } from './canvasManager.js';
 
-const KeyStatus = {
+export const KeyStatus = {
 	UP: 0,
 	DOWN: 1,
 	RELEASED: 2
@@ -79,8 +79,10 @@ export const InputManager = () => {
 				status: KeyStatus.UP,
 				code: 68
 			},
-			mousePosition: new Vector2(0,0),
-			leftMouseState: KeyStatus.UP
+		},
+		mouse: {
+			position: new Vector2(0,0),
+			leftState: KeyStatus.UP
 		}
 	};
 
@@ -89,15 +91,15 @@ export const InputManager = () => {
 
 	const canvasManager = new CanvasManager();
 	canvasManager.uiCanvas.addEventListener('mousemove', (evt) => {
-		m_InputManager.mousePosition = GetMousePos(evt);
+		m_InputManager.mouse.position = GetMousePos(evt);
 	}, false);
 
 	canvasManager.uiCanvas.addEventListener('mousedown', () => { 
-		m_InputManager.leftMouseState = KeyStatus.DOWN;
+		m_InputManager.mouse.leftState = KeyStatus.DOWN;
 	});
 
 	canvasManager.uiCanvas.addEventListener('mouseup', () => { 
-		m_InputManager.leftMouseState = KeyStatus.RELEASED;
+		m_InputManager.mouse.leftState = KeyStatus.RELEASED;
 	});
 
 	m_InputManager.PostUpdate = () => {
@@ -107,8 +109,8 @@ export const InputManager = () => {
 				m_InputManager.keys[key] = KeyStatus.UP;
 			}
 		}
-		if(m_InputManager.leftMouseState === KeyStatus.RELEASED) {
-			m_InputManager.leftMouseState = KeyStatus.UP;
+		if(m_InputManager.mouse.leftState === KeyStatus.RELEASED) {
+			m_InputManager.mouse.leftState = KeyStatus.UP;
 		}
 	};
 

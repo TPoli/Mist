@@ -1,6 +1,6 @@
 import { g_AllShaders } from './shader.js';
 import { InputManager } from './inputManager.js';
-import { RenderUI } from './ui/uiManager.js';
+import { UIManager } from './ui/uiManager.js';
 import { CreateMesh } from './mesh.js';
 import { CanvasManager } from './canvasManager.js';
 import { Map } from './mapManager.js';
@@ -36,8 +36,8 @@ const Update = (deltaTime) => {
 
 	entityManager.Update(deltaTime);
 
-	const halfCanvasTileCountX = (canvasManager.glCanvas.offsetWidth / 64.0) / 2.0;
-	const halfCanvasTileCountY = (canvasManager.glCanvas.offsetHeight / 64.0) / 2.0;
+	const halfCanvasTileCountX = (canvasManager.glCanvas.offsetWidth / g_iSpriteSize) / 2.0;
+	const halfCanvasTileCountY = (canvasManager.glCanvas.offsetHeight / g_iSpriteSize) / 2.0;
 
 	cameraPos.X = Math.min(halfCanvasTileCountX, cameraPos.X);
 	cameraPos.X = Math.max(-g_oMap.MapWidth + halfCanvasTileCountX, cameraPos.X);
@@ -45,13 +45,17 @@ const Update = (deltaTime) => {
 	cameraPos.Y = Math.min(halfCanvasTileCountY, cameraPos.Y);
 	cameraPos.Y = Math.max(-g_oMap.MapHeight + halfCanvasTileCountY, cameraPos.Y);
 
+	const uiManager = new UIManager();
+	uiManager.Update();
+
 	InputManager().PostUpdate(); // reset keys if released this frame
 };
 
 const Render = () => {
 	canvasManager.gl.clear(canvasManager.gl.COLOR_BUFFER_BIT);
 
-	const vCanvasSize = new Vector2(canvasManager.glCanvas.offsetWidth, canvasManager.glCanvas.offsetHeight);
+	const glCanvas = canvasManager.glCanvas;
+	const vCanvasSize = new Vector2(glCanvas.offsetWidth, glCanvas.offsetHeight);
 	// update all shaders
 	for(let i = 0; i < g_AllShaders.length; ++i) {
 		g_AllShaders[i].shader.Bind();
@@ -64,7 +68,8 @@ const Render = () => {
 
 	entityManager.Render();
 
-	RenderUI();
+	const uiManager = new UIManager();
+	uiManager.Render();
 };
 
 const msPerSecond = 1000;
